@@ -1,0 +1,43 @@
+name: build-kernel
+on:
+  workflow_dispatch:
+jobs:
+  build-ksu:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 10
+      #- name: Setup build environment
+      #  run: curl https://raw.githubusercontent.com/akhilnarang/scripts/master/setup/android_build_env.sh | bash -
+      - name: Setup build environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl git ccache pngcrush schedtool maven lib32ncurses5-dev xsltproc libxml2-utils squashfs-tools lzop flex build-essential bc libssl-dev libswitch-perl libxml-simple-perl zip unzip g++-multilib bison gperf zlib1g-dev automake device-tree-compiler
+          sudo curl --create-dirs -L -o /usr/local/bin/repo -O -L https://storage.googleapis.com/git-repo-downloads/repo
+          sudo chmod a+rx /usr/local/bin/repo
+      - name: Setup Proton Clang
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/kdrag0n/proton-clang.git --depth 1
+      - name: Build kernel
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/logantmg/Xiaomi_Kernel_OpenSource.git --depth 1
+          cd Xiaomi_Kernel_OpenSource
+          chmod +x compile.sh compile-beryllium.sh
+          ./compile.sh
+      - name: Zip output
+        run: |
+          cd $GITHUB_WORKSPACE/Xiaomi_Kernel_OpenSource/out/outputs/beryllium
+          zip -r9 "$GITHUB_WORKSPACE/kernel.zip" * -x .git README.md *placeholder
+      - name: Generate release tag
+        id: tag
+        run: echo "release_tag=NGK_Kernel_$(date +'%Y.%m.%d')" >> "$GITHUB_OUTPUT"
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          files: |
+            kernel.zip
