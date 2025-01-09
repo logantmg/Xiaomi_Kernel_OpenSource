@@ -6,8 +6,7 @@
 PHONE="beryllium"
 ARCH="arm64"
 SUBARCH="arm64"
-DEFCONFIG=nogravity_defconfig
-#DEFCONFIG=beryllium_defconfig
+DEFCONFIG=beryllium_user_defconfig
 COMPILER=clang
 LINKER=""
 COMPILERDIR="$(pwd)/../proton-clang"
@@ -21,7 +20,7 @@ mkdir -p out/outputs/${PHONE}/10.3.7-SE
 mkdir -p out/outputs/${PHONE}/10.3.7-NSE
 
 # Export shits
-export KBUILD_BUILD_USER=Pierre2324
+export KBUILD_BUILD_USER=logantmg
 export KBUILD_BUILD_HOST=G7-7588
 
 # Speed up build process
