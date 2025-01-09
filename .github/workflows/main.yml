@@ -26,8 +26,8 @@ jobs:
           cd $GITHUB_WORKSPACE
           git clone https://github.com/logantmg/Xiaomi_Kernel_OpenSource.git --depth 1
           cd Xiaomi_Kernel_OpenSource
-          chmod +x compile.sh compile-beryllium.sh
-          ./compile.sh
+          chmod +x compile-beryllium.sh
+          ./compile-beryllium.sh
       - name: Zip output
         run: |
           cd $GITHUB_WORKSPACE/Xiaomi_Kernel_OpenSource/out/outputs/beryllium
